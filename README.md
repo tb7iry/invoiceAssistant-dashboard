@@ -1,59 +1,37 @@
-# InvoiceAssistantDashboard
+# Invoice Dashboard - Angular 20
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.8.
+A modern, responsive invoice management dashboard built with Angular 20, featuring an intelligent chatbot assistant that supports both English and Arabic languages.
 
-## Development server
+## Features
 
-To start a local development server, run:
+### 📊 Dashboard Overview
+- **Real-time Statistics**: Total invoices, amounts, pending, and overdue counts
+- **Visual Status Indicators**: Color-coded status badges for easy identification
+- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
 
-```bash
-ng serve
-```
+### 📋 Invoice Management
+- **CRUD Operations**: Create, read, update, and delete invoices
+- **Advanced Search**: Filter by client name, invoice number, or status
+- **Status Filtering**: Quick filter by invoice status (All, Pending, Paid, Overdue)
+- **Modal Forms**: Intuitive forms for creating and editing invoices
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### 🤖 AI Chatbot Assistant
+- **Bilingual Support**: Responds in both English and Arabic
+- **Natural Language**: Ask questions in conversational language
+- **Quick Actions**: Pre-built common queries for faster interaction
+- **Smart Responses**: Context-aware responses based on invoice data
 
-## Code scaffolding
+### 🎨 Modern UI/UX
+- **Glassmorphism Design**: Modern, sleek interface with subtle gradients
+- **Smooth Animations**: Micro-interactions and transitions
+- **Accessibility**: WCAG compliant with proper focus management
+- **Dark Mode Ready**: Prepared for dark theme implementation
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Technology Stack
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- **Framework**: Angular 20 (Standalone Components)
+- **Language**: TypeScript 5.6+
+- **Styling**: Modern CSS with CSS Grid and Flexbox
+- **State Management**: RxJS Observables and Services
+- **Forms**: Reactive Forms with validation
+- **Architecture**: Clean Architecture with separation of concerns

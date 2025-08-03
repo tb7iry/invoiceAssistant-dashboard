@@ -1,12 +1,17 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { InvoiceDashboardComponent } from './components/invoice-dashboard/invoice-dashboard.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, InvoiceDashboardComponent],
+  template: `
+    <app-invoice-dashboard></app-invoice-dashboard>
+  `,
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'invoiceAssistant-dashboard';
+  title = 'invoice-dashboard';
 }
