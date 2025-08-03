@@ -13,11 +13,6 @@
         </button>
       </div>
     </div>
-    
-    <!-- Development Mode Warning -->
-    <div class="dev-warning">
-      ⚠️ <strong>Development Mode:</strong> Currently using mock data. To connect to a real database, set the DATABASE_URL environment variable.
-    </div>
   </header>
 
   <!-- Stats Cards -->
@@ -31,7 +26,6 @@
         <p>Total Invoices</p>
       </div>
     </div>
-    
     <div class="stat-card">
       <div class="stat-icon green">
         <i class="icon-dollar"></i>
@@ -40,50 +34,6 @@
         <h3>{{ formatCurrency(stats.totalAmount) }}</h3>
         <p>Total Amount</p>
       </div>
-    </div>
-    
-    <div class="stat-card">
-      <div class="stat-icon yellow">
-        <i class="icon-clock"></i>
-      </div>
-      <div class="stat-content">
-        <h3>{{ stats.pending }}</h3>
-        <p>Pending</p>
-      </div>
-    </div>
-    
-    <div class="stat-card">
-      <div class="stat-icon red">
-        <i class="icon-alert"></i>
-      </div>
-      <div class="stat-content">
-        <h3>{{ stats.overdue }}</h3>
-        <p>Overdue</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Filters and Search -->
-  <div class="filters-section">
-    <div class="search-container">
-      <i class="icon-search"></i>
-      <input 
-        type="text" 
-        placeholder="Search invoices..." 
-        [(ngModel)]="searchQuery"
-        (input)="onSearchChange()"
-        class="search-input"
-      >
-    </div>
-    
-    <div class="filter-container">
-      <i class="icon-filter"></i>
-      <select [(ngModel)]="selectedFilter" (change)="onFilterChange()" class="filter-select">
-        <option value="all">All Status</option>
-        <option value="pending">Pending</option>
-        <option value="paid">Paid</option>
-        <option value="overdue">Overdue</option>
-      </select>
     </div>
   </div>
 
@@ -95,7 +45,7 @@
         Recent Invoices
       </h2>
     </div>
-    
+
     <div class="invoices-list">
       <div 
         *ngFor="let invoice of filteredInvoices" 
@@ -105,241 +55,282 @@
         <div class="invoice-icon">
           <i class="icon-file"></i>
         </div>
-        
         <div class="invoice-details">
-          <h4>{{ invoice.number }}</h4>
-          <p>{{ invoice.client }}</p>
+          <h4>{{ invoice.invoiceNumber }}</h4>
+          <p>{{ invoice.clientName }}</p>
         </div>
-        
         <div class="invoice-amount">
-          <h4>{{ formatCurrency(invoice.amount) }}</h4>
-          <p>{{ invoice.date }}</p>
+          <h4>{{ formatCurrency(invoice.totalAmount) }}</h4>
+          <p>{{ formatDate(invoice.issueDate) }}</p>
         </div>
-        
-        <div class="invoice-status">
-          <span [class]="'status-badge ' + getStatusClass(invoice.status)">
-            {{ invoice.status }}
-          </span>
-        </div>
-        
         <div class="invoice-actions" (click)="$event.stopPropagation()">
           <button class="btn-icon" (click)="openEditModal(invoice)" title="Edit">
             <i class="icon-edit"></i>
           </button>
-          <button class="btn-icon danger" (click)="deleteInvoice(invoice)" title="Delete">
-            <i class="icon-trash"></i>
-          </button>
         </div>
       </div>
-      
-      <div *ngIf="filteredInvoices.length === 0" class="empty-state">
-        <i class="icon-search"></i>
-        <h3>No invoices found</h3>
-        <p>Try adjusting your search or filter criteria</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Create Invoice Modal -->
-  <div class="modal-overlay" *ngIf="showCreateModal" (click)="closeCreateModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h3>Create New Invoice</h3>
-        <button class="btn-close" (click)="closeCreateModal()">×</button>
-      </div>
-      
-      <form [formGroup]="createInvoiceForm" (ngSubmit)="createInvoice()" class="modal-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Invoice Number *</label>
-            <input type="text" formControlName="number" placeholder="INV-2024-009">
-          </div>
-          <div class="form-group">
-            <label>Status</label>
-            <select formControlName="status">
-              <option value="Pending">Pending</option>
-              <option value="Paid">Paid</option>
-              <option value="Overdue">Overdue</option>
-            </select>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label>Client Name *</label>
-          <input type="text" formControlName="client" placeholder="Client Company Name">
-        </div>
-        
-        <div class="form-group">
-          <label>Amount *</label>
-          <input type="number" formControlName="amount" placeholder="0.00" min="0" step="0.01">
-        </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label>Invoice Date *</label>
-            <input type="date" formControlName="date">
-          </div>
-          <div class="form-group">
-            <label>Due Date *</label>
-            <input type="date" formControlName="dueDate">
-          </div>
-        </div>
-        
-        <div class="modal-actions">
-          <button type="button" class="btn btn-secondary" (click)="closeCreateModal()">
-            Cancel
-          </button>
-          <button type="submit" class="btn btn-primary" [disabled]="!createInvoiceForm.valid">
-            Create Invoice
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Edit Invoice Modal -->
-  <div class="modal-overlay" *ngIf="showEditModal" (click)="closeEditModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h3>Edit Invoice</h3>
-        <button class="btn-close" (click)="closeEditModal()">×</button>
-      </div>
-      
-      <form [formGroup]="editInvoiceForm" (ngSubmit)="updateInvoice()" class="modal-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Invoice Number *</label>
-            <input type="text" formControlName="number">
-          </div>
-          <div class="form-group">
-            <label>Status</label>
-            <select formControlName="status">
-              <option value="Pending">Pending</option>
-              <option value="Paid">Paid</option>
-              <option value="Overdue">Overdue</option>
-            </select>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label>Client Name *</label>
-          <input type="text" formControlName="client">
-        </div>
-        
-        <div class="form-group">
-          <label>Amount *</label>
-          <input type="number" formControlName="amount" min="0" step="0.01">
-        </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label>Invoice Date *</label>
-            <input type="date" formControlName="date">
-          </div>
-          <div class="form-group">
-            <label>Due Date *</label>
-            <input type="date" formControlName="dueDate">
-          </div>
-        </div>
-        
-        <div class="modal-actions">
-          <button type="button" class="btn btn-secondary" (click)="closeEditModal()">
-            Cancel
-          </button>
-          <button type="submit" class="btn btn-primary" [disabled]="!editInvoiceForm.valid">
-            Update Invoice
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Chatbot Toggle Button -->
-  <button 
-    class="chatbot-toggle" 
-    (click)="toggleChatbot()"
-    [class.active]="showChatbot"
-    title="Invoice Assistant"
-  >
-    <i class="icon-message" *ngIf="!showChatbot"></i>
-    <i class="icon-close" *ngIf="showChatbot"></i>
-  </button>
-
-  <!-- Chatbot Panel -->
-  <div class="chatbot-panel" [class.show]="showChatbot">
-    <div class="chatbot-header">
-      <div class="chatbot-avatar">
-        <i class="icon-bot"></i>
-      </div>
-      <div class="chatbot-info">
-        <h4>Invoice Assistant</h4>
-        <p>Ask in English or Arabic</p>
-      </div>
-      <button class="btn-close" (click)="toggleChatbot()">×</button>
-    </div>
-    
-    <div class="chatbot-messages" #messagesContainer>
-      <div 
-        *ngFor="let message of chatMessages" 
-        [class]="'message ' + (message.isUser ? 'user' : 'bot')"
-      >
-        <div class="message-content">
-          <p [innerHTML]="message.text | nl2br"></p>
-          <span class="message-time">
-            {{ message.timestamp | date:'short' }}
+      <div class="pagination-container" *ngIf="paginatedData">
+        <div class="pagination-info">
+          <span>
+            Showing {{ (paginatedData.pageIndex * paginatedData.pageSize) + 1 }} to 
+            {{ Math.min((paginatedData.pageIndex + 1) * paginatedData.pageSize, paginatedData.totalCount) }} 
+            of {{ paginatedData.totalCount }} invoices
           </span>
         </div>
-      </div>
-      
-      <div class="message bot" *ngIf="isTyping">
-        <div class="message-content">
-          <div class="typing-indicator">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
+        <div class="pagination-controls">
+          <button 
+            class="btn-page" 
+            [disabled]="!paginatedData.hasPreviousPage"
+            (click)="onPageChange(paginatedData.pageIndex - 1)"
+          >
+            Previous
+          </button>
+          <span class="page-info">
+            Page {{ paginatedData.pageIndex + 1 }} of {{ paginatedData.totalPages }}
+          </span>
+          <button 
+            class="btn-page" 
+            [disabled]="!paginatedData.hasNextPage"
+            (click)="onPageChange(paginatedData.pageIndex + 1)"
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>
-    
-    <div class="chatbot-input">
-      <div class="input-container">
-        <textarea 
-          [(ngModel)]="currentMessage"
-          (keypress)="onKeyPress($event)"
-          placeholder="Ask about invoices... / اسأل عن الفواتير..."
-          rows="1"
-          class="message-input"
-        ></textarea>
-        <button 
-          class="btn-send" 
-          (click)="sendMessage()"
-          [disabled]="!currentMessage.trim() || isTyping"
-        >
-          <i class="icon-send"></i>
-        </button>
-      </div>
-      
-      <div class="quick-actions">
-        <button class="quick-btn" (click)="currentMessage='Show me all pending invoices'; sendMessage()">
-          Show me all pending invoices
-        </button>
-        <button class="quick-btn" (click)="currentMessage='What invoices are overdue?'; sendMessage()">
-          What invoices are overdue?
-        </button>
-        <button class="quick-btn" (click)="currentMessage='Find invoices over $2000'; sendMessage()">
-          Find invoices over $2000
-        </button>
-        <button class="quick-btn" (click)="currentMessage='أظهر لي جميع الفواتير المعلقة'; sendMessage()">
-          أظهر لي جميع الفواتير المعلقة
-        </button>
-        <button class="quick-btn" (click)="currentMessage='ما هي الفواتير المتأخرة؟'; sendMessage()">
-          ما هي الفواتير المتأخرة؟
-        </button>
-        <button class="quick-btn" (click)="currentMessage='ابحث عن فواتير أكثر من ١٠٠٠ دولار'; sendMessage()">
-          ابحث عن فواتير أكثر من ١٠٠٠ دولار
-        </button>
-      </div>
+    <div *ngIf="filteredInvoices.length === 0" class="empty-state">
+      <i class="icon-search"></i>
+      <h3>No invoices found</h3>
+      <p>Try adjusting your search criteria</p>
     </div>
   </div>
 </div>
+
+<!-- Chatbot Toggle Button -->
+<button 
+  class="chatbot-toggle" 
+  (click)="toggleChatbot()"
+  [class.active]="showChatbot"
+  title="Invoice Assistant"
+>
+  <i class="icon-message" *ngIf="!showChatbot"></i>
+  <i class="icon-close" *ngIf="showChatbot"></i>
+</button>
+
+<!-- Chatbot Panel -->
+<div class="chatbot-panel" [class.show]="showChatbot">
+  <div class="chatbot-header">
+    <div class="chatbot-avatar">
+      <i class="icon-bot"></i>
+    </div>
+    <div class="chatbot-info">
+      <h4>Invoice Assistant</h4>
+      <p>Ask in English</p>
+    </div>
+    <button class="btn-close" (click)="toggleChatbot()">×</button>
+  </div>
+  <div class="chatbot-messages" #messagesContainer>
+    <div 
+      *ngFor="let message of chatMessages; let i = index" 
+      [ngClass]="{'message': true, 'user': i % 2 === 0, 'bot': i % 2 !== 0}"
+    >
+      <div class="message-content">
+        <p [innerHTML]="message.text | nl2br"></p>
+      </div>
+    </div>
+    <div class="message bot" *ngIf="isTyping">
+      <div class="message-content">
+        <div class="typing-indicator">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="chatbot-input">
+    <div class="input-container">
+      <textarea 
+        [(ngModel)]="currentMessage"
+        (keypress)="onKeyPress($event)"
+        placeholder="Ask about invoices..."
+        rows="1"
+        class="message-input"
+        cdkTextareaAutosize
+      ></textarea>
+      <button 
+        class="btn-send" 
+        (click)="sendMessage()"
+        [disabled]="!currentMessage.trim() || isTyping"
+      >
+        <i class="icon-send"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Create Invoice Modal -->
+<div class="modal-overlay" *ngIf="showCreateModal" (click)="closeCreateModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Create Invoice</h3>
+      <button class="btn-close" (click)="closeCreateModal()">×</button>
+    </div>
+    <form [formGroup]="createInvoiceForm" (ngSubmit)="createInvoice()" class="modal-form">
+
+      <div class="form-group">
+        <label>Invoice Number <span>*</span></label>
+        <input type="text" formControlName="invoiceNumber" [ngClass]="{'ng-invalid ng-touched': createInvoiceForm.get('invoiceNumber')?.invalid && createInvoiceForm.get('invoiceNumber')?.touched}">
+        <div class="error" *ngIf="createInvoiceForm.get('invoiceNumber')?.invalid && createInvoiceForm.get('invoiceNumber')?.touched">
+          Invoice number is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Client Name <span>*</span></label>
+        <input type="text" formControlName="clientName" [ngClass]="{'ng-invalid ng-touched': createInvoiceForm.get('clientName')?.invalid && createInvoiceForm.get('clientName')?.touched}">
+        <div class="error" *ngIf="createInvoiceForm.get('clientName')?.invalid && createInvoiceForm.get('clientName')?.touched">
+          Client name is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Issue Date <span>*</span></label>
+        <input type="date" formControlName="issueDate" [ngClass]="{'ng-invalid ng-touched': createInvoiceForm.get('issueDate')?.invalid && createInvoiceForm.get('issueDate')?.touched}">
+        <div class="error" *ngIf="createInvoiceForm.get('issueDate')?.invalid && createInvoiceForm.get('issueDate')?.touched">
+          Issue date is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Invoice Items <span>*</span></label>
+        <div class="item-detail-labels-row">
+          <span>Item Name</span>
+          <span>Quantity </span>
+          <span>Unit Price </span>
+          <span style="visibility: hidden">Remove</span>
+        </div>
+        <div formArrayName="invoiceDetails">
+          <div *ngFor="let item of invoiceDetails.controls; let i = index" [formGroupName]="i" class="item-row-grid">
+            <div class="item-cell">
+              <input type="text" formControlName="itemName">
+              <div class="error" *ngIf="item.get('itemName')?.invalid && (item.get('itemName')?.touched || item.get('itemName')?.dirty)">
+                Item Name Required.
+              </div>
+            </div>
+            <div class="item-cell">
+              <input type="number" formControlName="quantity" min="1">
+              <div class="error" *ngIf="item.get('quantity')?.invalid && (item.get('quantity')?.touched || item.get('quantity')?.dirty)">
+                Qty ≥ 1.
+              </div>
+            </div>
+            <div class="item-cell">
+              <input type="number" formControlName="unitPrice" min="0.01" step="0.01">
+              <div class="error" *ngIf="item.get('unitPrice')?.invalid && (item.get('unitPrice')?.touched || item.get('unitPrice')?.dirty)">
+                Price ≥ 0.01.
+              </div>
+            </div>
+            <button type="button" class="btn btn-danger btn-remove" (click)="removeInvoiceItem(i)" [disabled]="invoiceDetails.length === 1">Remove</button>
+          </div>
+        </div>
+        <div class="error" *ngIf="invoiceDetails.length === 0">
+          At least 1 item is required.
+        </div>
+        <button type="button" class="btn btn-secondary mt-2" (click)="addInvoiceItem()">+ Add Item</button>
+      </div>
+
+      <div class="form-group">
+        <label>Total Amount</label>
+        <input type="text" [value]="calculatedTotalAmount | number:'1.2-2'" readonly style="background:#f3f3f3;" />
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" (click)="closeCreateModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!createInvoiceForm.valid || invoiceDetails.length < 1">Create</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- Edit Invoice Modal -->
+<div class="modal-overlay" *ngIf="showEditModal" (click)="closeEditModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Edit Invoice</h3>
+      <button class="btn-close" (click)="closeEditModal()">×</button>
+    </div>
+    <form [formGroup]="editInvoiceForm" (ngSubmit)="updateInvoice()" class="modal-form">
+
+      <div class="form-group">
+        <label>Invoice Number <span>*</span></label>
+        <input type="text" formControlName="invoiceNumber" [ngClass]="{'ng-invalid ng-touched': editInvoiceForm.get('invoiceNumber')?.invalid && editInvoiceForm.get('invoiceNumber')?.touched}">
+        <div class="error" *ngIf="editInvoiceForm.get('invoiceNumber')?.invalid && editInvoiceForm.get('invoiceNumber')?.touched">
+          Invoice number is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Client Name <span>*</span></label>
+        <input type="text" formControlName="clientName" [ngClass]="{'ng-invalid ng-touched': editInvoiceForm.get('clientName')?.invalid && editInvoiceForm.get('clientName')?.touched}">
+        <div class="error" *ngIf="editInvoiceForm.get('clientName')?.invalid && editInvoiceForm.get('clientName')?.touched">
+          Client name is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Issue Date <span>*</span></label>
+        <input type="date" formControlName="issueDate" [ngClass]="{'ng-invalid ng-touched': editInvoiceForm.get('issueDate')?.invalid && editInvoiceForm.get('issueDate')?.touched}">
+        <div class="error" *ngIf="editInvoiceForm.get('issueDate')?.invalid && editInvoiceForm.get('issueDate')?.touched">
+          Issue date is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Invoice Items <span>*</span></label>
+        <div class="item-detail-labels-row">
+          <span>Item Name</span>
+          <span>Quantity </span>
+          <span>Unit Price </span>
+          <span style="visibility: hidden">Remove</span>
+        </div>
+        <div formArrayName="invoiceDetails">
+          <div *ngFor="let item of editInvoiceDetails.controls; let i = index" [formGroupName]="i" class="item-row-grid">
+            <div class="item-cell">
+              <input type="text" formControlName="itemName">
+              <div class="error" *ngIf="item.get('itemName')?.invalid && (item.get('itemName')?.touched || item.get('itemName')?.dirty)">
+                Item Name Required.
+              </div>
+            </div>
+            <div class="item-cell">
+              <input type="number" formControlName="quantity" min="1">
+              <div class="error" *ngIf="item.get('quantity')?.invalid && (item.get('quantity')?.touched || item.get('quantity')?.dirty)">
+                Qty ≥ 1.
+              </div>
+            </div>
+            <div class="item-cell">
+              <input type="number" formControlName="unitPrice" min="0.01" step="0.01">
+              <div class="error" *ngIf="item.get('unitPrice')?.invalid && (item.get('unitPrice')?.touched || item.get('unitPrice')?.dirty)">
+                Price ≥ 0.01.
+              </div>
+            </div>
+            <button type="button" class="btn btn-danger btn-remove" (click)="removeEditInvoiceItem(i)" [disabled]="editInvoiceDetails.length === 1">Remove</button>
+          </div>
+        </div>
+        <div class="error" *ngIf="editInvoiceDetails.length === 0">
+          At least 1 item is required.
+        </div>
+        <button type="button" class="btn btn-secondary mt-2" (click)="addEditInvoiceItem()">+ Add Item</button>
+      </div>
+
+      <div class="form-group">
+        <label>Total Amount</label>
+        <input type="text" [value]="calculatedEditTotalAmount | number:'1.2-2'" readonly style="background:#f3f3f3;" />
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!editInvoiceForm.valid || editInvoiceDetails.length < 1">Update</button>
+      </div>
+    </form>
+  </div>
+</div>
+

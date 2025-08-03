@@ -18,6 +18,13 @@ html, body {
   height: 100%;
 }
 
+.modal-content .error {
+  color: red !important;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 8px;
@@ -99,5 +106,7 @@ textarea:focus-visible {
     box-shadow: none !important;
     border: 1px solid #ddd !important;
   }
+
+  
 }
 
